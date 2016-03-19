@@ -1,0 +1,12 @@
+# Config example
+# config path .ssh/aconfig
+
+[<host_allias1>]
+hostname: <ip>
+user: <username>
+run_after: <command will be running after login>
+
+[<host_allias2>]
+hostname: <ip>
+user: <username>
+run_after: <command will be running after login>
