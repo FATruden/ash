@@ -1,6 +1,6 @@
 ash - is very simple wriper for standart ssh-client.
 
-Config path: 
+Config path:
 
 `.ssh/aconfig`
 
@@ -18,6 +18,14 @@ Example command:
 `$ ash myhost1`
 
 
-Connect to myhost2 over myhost1:
+Connect to host2 over host1:
 
-`$ ash myhost1 myhost2`
+`$ ash host1 host2`
+
+
+# Installation
+
+## Mac OS
+
+`$ sudo easy_install pip`
+`$ pip install configparser`
