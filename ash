@@ -1,44 +1,56 @@
 #!/usr/bin/python
 
+import argparse
 import configparser
-import subprocess
 import os
-import sys
+import subprocess
 
-home_dir = os.environ['HOME']
+from sys import exit
+
+home_dir = os.environ["HOME"]
 config_file = home_dir + "/.ssh/aconfig"
-arg_len = len(sys.argv)
+
+# list for ssh params
 params = []
+params.append("ssh")
+params.append("-t")
 
 config = configparser.ConfigParser()
 config.read(config_file)
 
-if arg_len == 1:
-	print("Need a hostname")
-	sys.exit(1)
+parser = argparse.ArgumentParser(description="ash help")
+parser.add_argument("hosts", metavar="HOST", nargs="*",
+					help="host or host\'s list")
+parser.add_argument("--no-command", "-n", action="store_true",
+					help="Doesn't run command after login")
+args = parser.parse_args()
 
-if config.has_option(sys.argv[1], 'hostname'):
-	host_alias = sys.argv[1]
-	hostname = config[sys.argv[1]]['hostname']
-	params.append("ssh")
-	params.append(hostname)
+if not len(args.hosts) > 2:
+	hostname = args.hosts[0]
+	if config.has_option(hostname, "hostname"):
+		host_address = config[hostname]["hostname"]
+		params.append(host_address)
+	else:
+		# TODO: format "hostname" and config path
+ 		print("Hostname didn't found in config")
+ 		exit(1)
+
+	if config.has_option(hostname, "user"):
+		user = config[hostname]["user"]
+		params.append("-l")
+		params.append(user)
+
+	if len(args.hosts) == 2:
+		params.append("ssh")
+		params.append("-t")
+		params.append(args.hosts[1])
+
+	if not args.no_command and config.has_option(hostname, "command"):
+		params.append(config[hostname]["command"])
+
 else:
-	print("Hostname didn't found in config")
-	sys.exit(1)
+	print("Supported only one or two hosts!")
+	exit(1)
 
-if config.has_option(host_alias, 'user'):
-	user = config[host_alias]['user']
-	params.append("-l")
-	params.append(user)
-
-if arg_len == 3:
-	params.append("-t")
-	params.append("ssh")
-	params.append(sys.argv[2])
-
-if config.has_option(host_alias, 'run_after'):
-	run_after = config[host_alias]['run_after']
-	params.append("-t")
-	params.append(run_after)
-
+# TODO: meybe detach?
 subprocess.call(params)
