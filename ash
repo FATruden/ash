@@ -20,7 +20,7 @@ config.read(config_file)
 
 parser = argparse.ArgumentParser(description="ash help")
 parser.add_argument("hosts", metavar="HOST", nargs="*",
-					help="host or host\'s list")
+					help="host or hosts' list")
 parser.add_argument("--no-command", "-n", action="store_true",
 					help="Doesn't run command after login")
 args = parser.parse_args()
@@ -31,8 +31,8 @@ if not len(args.hosts) > 2:
 		host_address = config[hostname]["hostname"]
 		params.append(host_address)
 	else:
-		# TODO: format "hostname" and config path
- 		print("Hostname didn't found in config")
+ 		print("Hostname '{0}' didn't found in config '{1}'".format(
+			hostname, config_file))
  		exit(1)
 
 	if config.has_option(hostname, "user"):
